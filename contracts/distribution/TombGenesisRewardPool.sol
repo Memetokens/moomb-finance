@@ -79,14 +79,14 @@ contract TombGenesisRewardPool {
     }
 
     modifier onlyOperator() {
-        require(operator == msg.sender, "TombGenesisPool: caller is not the operator");
+        require(operator == msg.sender, "MoombGenesisPool: caller is not the operator");
         _;
     }
 
     function checkPoolDuplicate(IERC20 _token) internal view {
         uint256 length = poolInfo.length;
         for (uint256 pid = 0; pid < length; ++pid) {
-            require(poolInfo[pid].token != _token, "TombGenesisPool: existing pool?");
+            require(poolInfo[pid].token != _token, "MoombGenesisPool: existing pool?");
         }
     }
 
@@ -116,16 +116,8 @@ contract TombGenesisRewardPool {
                 _lastRewardTime = block.timestamp;
             }
         }
-        bool _isStarted =
-        (_lastRewardTime <= poolStartTime) ||
-        (_lastRewardTime <= block.timestamp);
-        poolInfo.push(PoolInfo({
-            token : _token,
-            allocPoint : _allocPoint,
-            lastRewardTime : _lastRewardTime,
-            accTombPerShare : 0,
-            isStarted : _isStarted
-            }));
+        bool _isStarted = (_lastRewardTime <= poolStartTime) || (_lastRewardTime <= block.timestamp);
+        poolInfo.push(PoolInfo({token: _token, allocPoint: _allocPoint, lastRewardTime: _lastRewardTime, accTombPerShare: 0, isStarted: _isStarted}));
         if (_isStarted) {
             totalAllocPoint = totalAllocPoint.add(_allocPoint);
         }
@@ -136,9 +128,7 @@ contract TombGenesisRewardPool {
         massUpdatePools();
         PoolInfo storage pool = poolInfo[_pid];
         if (pool.isStarted) {
-            totalAllocPoint = totalAllocPoint.sub(pool.allocPoint).add(
-                _allocPoint
-            );
+            totalAllocPoint = totalAllocPoint.sub(pool.allocPoint).add(_allocPoint);
         }
         pool.allocPoint = _allocPoint;
     }
@@ -217,7 +207,7 @@ contract TombGenesisRewardPool {
         }
         if (_amount > 0) {
             pool.token.safeTransferFrom(_sender, address(this), _amount);
-            if(address(pool.token) == shiba) {
+            if (address(pool.token) == shiba) {
                 user.amount = user.amount.add(_amount.mul(9900).div(10000));
             } else {
                 user.amount = user.amount.add(_amount);
@@ -274,7 +264,11 @@ contract TombGenesisRewardPool {
         operator = _operator;
     }
 
-    function governanceRecoverUnsupported(IERC20 _token, uint256 amount, address to) external onlyOperator {
+    function governanceRecoverUnsupported(
+        IERC20 _token,
+        uint256 amount,
+        address to
+    ) external onlyOperator {
         if (block.timestamp < poolEndTime + 90 days) {
             // do not allow to drain core token (TOMB or lps) if less than 90 days after pool ends
             require(_token != tomb, "tomb");

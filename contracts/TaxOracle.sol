@@ -27,7 +27,7 @@ contract TombTaxOracle is Ownable {
         address _wftm,
         address _pair
     ) public {
-        require(_tomb != address(0), "tomb address cannot be 0");
+        require(_tomb != address(0), "moomb address cannot be 0");
         require(_wftm != address(0), "wftm address cannot be 0");
         require(_pair != address(0), "pair address cannot be 0");
         tomb = IERC20(_tomb);
@@ -36,14 +36,14 @@ contract TombTaxOracle is Ownable {
     }
 
     function consult(address _token, uint256 _amountIn) external view returns (uint144 amountOut) {
-        require(_token == address(tomb), "token needs to be tomb");
+        require(_token == address(tomb), "token needs to be moomb");
         uint256 tombBalance = tomb.balanceOf(pair);
         uint256 wftmBalance = wftm.balanceOf(pair);
         return uint144(tombBalance.div(wftmBalance));
     }
 
     function setTomb(address _tomb) external onlyOwner {
-        require(_tomb != address(0), "tomb address cannot be 0");
+        require(_tomb != address(0), "moomb address cannot be 0");
         tomb = IERC20(_tomb);
     }
 
@@ -56,7 +56,4 @@ contract TombTaxOracle is Ownable {
         require(_pair != address(0), "pair address cannot be 0");
         pair = _pair;
     }
-
-
-
 }

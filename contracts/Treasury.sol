@@ -112,13 +112,13 @@ contract Treasury is ContractGuard {
         _;
     }
 
-    modifier checkCondition {
+    modifier checkCondition() {
         require(now >= startTime, "Treasury: not started yet");
 
         _;
     }
 
-    modifier checkEpoch {
+    modifier checkEpoch() {
         require(now >= nextEpochPoint(), "Treasury: not opened yet");
 
         _;
@@ -127,7 +127,7 @@ contract Treasury is ContractGuard {
         epochSupplyContractionLeft = (getTombPrice() > tombPriceCeiling) ? 0 : getTombCirculatingSupply().mul(maxSupplyContractionPercent).div(10000);
     }
 
-    modifier checkOperator {
+    modifier checkOperator() {
         require(
             IBasisAsset(tomb).operator() == address(this) &&
                 IBasisAsset(tbond).operator() == address(this) &&
@@ -139,7 +139,7 @@ contract Treasury is ContractGuard {
         _;
     }
 
-    modifier notInitialized {
+    modifier notInitialized() {
         require(!initialized, "Treasury: already initialized");
 
         _;
@@ -161,7 +161,7 @@ contract Treasury is ContractGuard {
         try IOracle(tombOracle).consult(tomb, 1e18) returns (uint144 price) {
             return uint256(price);
         } catch {
-            revert("Treasury: failed to consult TOMB price from the oracle");
+            revert("Treasury: failed to consult MOOMB price from the oracle");
         }
     }
 
@@ -169,7 +169,7 @@ contract Treasury is ContractGuard {
         try IOracle(tombOracle).twap(tomb, 1e18) returns (uint144 price) {
             return uint256(price);
         } catch {
-            revert("Treasury: failed to consult TOMB price from the oracle");
+            revert("Treasury: failed to consult MOOMB price from the oracle");
         }
     }
 
@@ -414,7 +414,7 @@ contract Treasury is ContractGuard {
         require(_tombAmount > 0, "Treasury: cannot purchase bonds with zero amount");
 
         uint256 tombPrice = getTombPrice();
-        require(tombPrice == targetPrice, "Treasury: TOMB price moved");
+        require(tombPrice == targetPrice, "Treasury: MOOMB price moved");
         require(
             tombPrice < tombPriceOne, // price < $1
             "Treasury: tombPrice not eligible for bond purchase"
@@ -443,7 +443,7 @@ contract Treasury is ContractGuard {
         require(_bondAmount > 0, "Treasury: cannot redeem bonds with zero amount");
 
         uint256 tombPrice = getTombPrice();
-        require(tombPrice == targetPrice, "Treasury: TOMB price moved");
+        require(tombPrice == targetPrice, "Treasury: MOOMB price moved");
         require(
             tombPrice > tombPriceCeiling, // price > $1.01
             "Treasury: tombPrice not eligible for bond purchase"

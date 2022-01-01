@@ -101,7 +101,7 @@ contract Masonry is ShareWrapper, ContractGuard {
         _;
     }
 
-    modifier masonExists {
+    modifier masonExists() {
         require(balanceOf(msg.sender) > 0, "Masonry: The mason does not exist");
         _;
     }
@@ -116,7 +116,7 @@ contract Masonry is ShareWrapper, ContractGuard {
         _;
     }
 
-    modifier notInitialized {
+    modifier notInitialized() {
         require(!initialized, "Masonry: already initialized");
         _;
     }
@@ -132,7 +132,7 @@ contract Masonry is ShareWrapper, ContractGuard {
         share = _share;
         treasury = _treasury;
 
-        MasonrySnapshot memory genesisSnapshot = MasonrySnapshot({time : block.number, rewardReceived : 0, rewardPerShare : 0});
+        MasonrySnapshot memory genesisSnapshot = MasonrySnapshot({time: block.number, rewardReceived: 0, rewardPerShare: 0});
         masonryHistory.push(genesisSnapshot);
 
         withdrawLockupEpochs = 6; // Lock for 6 epochs (36h) before release withdraw
@@ -246,18 +246,18 @@ contract Masonry is ShareWrapper, ContractGuard {
         uint256 prevRPS = getLatestSnapshot().rewardPerShare;
         uint256 nextRPS = prevRPS.add(amount.mul(1e18).div(totalSupply()));
 
-        MasonrySnapshot memory newSnapshot = MasonrySnapshot({
-            time: block.number,
-            rewardReceived: amount,
-            rewardPerShare: nextRPS
-        });
+        MasonrySnapshot memory newSnapshot = MasonrySnapshot({time: block.number, rewardReceived: amount, rewardPerShare: nextRPS});
         masonryHistory.push(newSnapshot);
 
         tomb.safeTransferFrom(msg.sender, address(this), amount);
         emit RewardAdded(msg.sender, amount);
     }
 
-    function governanceRecoverUnsupported(IERC20 _token, uint256 _amount, address _to) external onlyOperator {
+    function governanceRecoverUnsupported(
+        IERC20 _token,
+        uint256 _amount,
+        address _to
+    ) external onlyOperator {
         // do not allow to drain core tokens
         require(address(_token) != address(tomb), "tomb");
         require(address(_token) != address(share), "share");

@@ -56,10 +56,7 @@ contract TShareRewardPool {
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event RewardPaid(address indexed user, uint256 amount);
 
-    constructor(
-        address _tshare,
-        uint256 _poolStartTime
-    ) public {
+    constructor(address _tshare, uint256 _poolStartTime) public {
         require(block.timestamp < _poolStartTime, "late");
         if (_tshare != address(0)) tshare = IERC20(_tshare);
         poolStartTime = _poolStartTime;
@@ -68,14 +65,14 @@ contract TShareRewardPool {
     }
 
     modifier onlyOperator() {
-        require(operator == msg.sender, "TShareRewardPool: caller is not the operator");
+        require(operator == msg.sender, "MShareRewardPool: caller is not the operator");
         _;
     }
 
     function checkPoolDuplicate(IERC20 _token) internal view {
         uint256 length = poolInfo.length;
         for (uint256 pid = 0; pid < length; ++pid) {
-            require(poolInfo[pid].token != _token, "TShareRewardPool: existing pool?");
+            require(poolInfo[pid].token != _token, "MShareRewardPool: existing pool?");
         }
     }
 
@@ -105,16 +102,8 @@ contract TShareRewardPool {
                 _lastRewardTime = block.timestamp;
             }
         }
-        bool _isStarted =
-        (_lastRewardTime <= poolStartTime) ||
-        (_lastRewardTime <= block.timestamp);
-        poolInfo.push(PoolInfo({
-            token : _token,
-            allocPoint : _allocPoint,
-            lastRewardTime : _lastRewardTime,
-            accTSharePerShare : 0,
-            isStarted : _isStarted
-            }));
+        bool _isStarted = (_lastRewardTime <= poolStartTime) || (_lastRewardTime <= block.timestamp);
+        poolInfo.push(PoolInfo({token: _token, allocPoint: _allocPoint, lastRewardTime: _lastRewardTime, accTSharePerShare: 0, isStarted: _isStarted}));
         if (_isStarted) {
             totalAllocPoint = totalAllocPoint.add(_allocPoint);
         }
@@ -125,9 +114,7 @@ contract TShareRewardPool {
         massUpdatePools();
         PoolInfo storage pool = poolInfo[_pid];
         if (pool.isStarted) {
-            totalAllocPoint = totalAllocPoint.sub(pool.allocPoint).add(
-                _allocPoint
-            );
+            totalAllocPoint = totalAllocPoint.sub(pool.allocPoint).add(_allocPoint);
         }
         pool.allocPoint = _allocPoint;
     }
@@ -259,10 +246,14 @@ contract TShareRewardPool {
         operator = _operator;
     }
 
-    function governanceRecoverUnsupported(IERC20 _token, uint256 amount, address to) external onlyOperator {
+    function governanceRecoverUnsupported(
+        IERC20 _token,
+        uint256 amount,
+        address to
+    ) external onlyOperator {
         if (block.timestamp < poolEndTime + 90 days) {
             // do not allow to drain core token (tSHARE or lps) if less than 90 days after pool ends
-            require(_token != tshare, "tshare");
+            require(_token != tshare, "mshare");
             uint256 length = poolInfo.length;
             for (uint256 pid = 0; pid < length; ++pid) {
                 PoolInfo storage pool = poolInfo[pid];

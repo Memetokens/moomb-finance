@@ -70,7 +70,7 @@ contract Tomb is ERC20Burnable, Operator {
     /**
      * @notice Constructs the TOMB ERC-20 contract.
      */
-    constructor(uint256 _taxRate, address _taxCollectorAddress) public ERC20("TOMB", "TOMB") {
+    constructor(uint256 _taxRate, address _taxCollectorAddress) public ERC20("MOOMB", "MOOMB") {
         // Mints 1 TOMB to contract creator for initial pool setup
         require(_taxRate < 10000, "tax equal or bigger to 100%");
         require(_taxCollectorAddress != address(0), "tax collector address must be non-zero address");
@@ -124,11 +124,11 @@ contract Tomb is ERC20Burnable, Operator {
         try IOracle(tombOracle).consult(address(this), 1e18) returns (uint144 _price) {
             return uint256(_price);
         } catch {
-            revert("Tomb: failed to fetch TOMB price from Oracle");
+            revert("Moomb: failed to fetch MOOMB price from Oracle");
         }
     }
 
-    function _updateTaxRate(uint256 _tombPrice) internal returns (uint256){
+    function _updateTaxRate(uint256 _tombPrice) internal returns (uint256) {
         if (autoCalculateTax) {
             for (uint8 tierId = uint8(getTaxTiersTwapsCount()).sub(1); tierId >= 0; --tierId) {
                 if (_tombPrice >= taxTiersTwaps[tierId]) {
@@ -220,7 +220,6 @@ contract Tomb is ERC20Burnable, Operator {
             }
         }
 
-
         if (currentTaxRate == 0 || excludedAddresses[sender]) {
             _transfer(sender, recipient, amount);
         } else {
@@ -240,7 +239,7 @@ contract Tomb is ERC20Burnable, Operator {
         uint256 taxAmount = amount.mul(taxRate).div(10000);
         uint256 amountAfterTax = amount.sub(taxAmount);
 
-        if(burnTax) {
+        if (burnTax) {
             // Burn tax
             super.burnFrom(sender, taxAmount);
         } else {

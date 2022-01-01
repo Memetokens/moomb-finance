@@ -18,7 +18,7 @@ contract TaxOffice is Operator {
     address public tomb;
 
     constructor(address _tomb) public {
-        require(_tomb != address(0), "tomb address cannot be 0");
+        require(_tomb != address(0), "moomb address cannot be 0");
         tomb = _tomb;
     }
 

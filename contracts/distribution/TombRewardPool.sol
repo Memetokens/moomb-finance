@@ -74,14 +74,14 @@ contract TombRewardPool {
     }
 
     modifier onlyOperator() {
-        require(operator == msg.sender, "TombRewardPool: caller is not the operator");
+        require(operator == msg.sender, "MoombRewardPool: caller is not the operator");
         _;
     }
 
     function checkPoolDuplicate(IERC20 _token) internal view {
         uint256 length = poolInfo.length;
         for (uint256 pid = 0; pid < length; ++pid) {
-            require(poolInfo[pid].token != _token, "TombRewardPool: existing pool?");
+            require(poolInfo[pid].token != _token, "MoombRewardPool: existing pool?");
         }
     }
 
