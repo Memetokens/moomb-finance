@@ -21,8 +21,8 @@ contract TaxOfficeV2 is Operator {
     using SafeMath for uint256;
 
     address public tomb = address(0x6c021Ae822BEa943b2E66552bDe1D2696a53fbB7);
-    address public wftm = address(0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83);
-    address public uniRouter = address(0xF491e7B69E4244ad4002BC14e878a34207E38c29);
+    address public wftm = address(0x98878B06940aE243284CA214f92Bb71a2b032B8A);
+    address public uniRouter = address(0xAA30eF758139ae4a7f798112902Bf6d65612045f);
 
     mapping(address => bool) public taxExclusionEnabled;
 
@@ -116,10 +116,10 @@ contract TaxOfficeV2 is Operator {
             block.timestamp
         );
 
-        if(amtTomb.sub(resultAmtTomb) > 0) {
+        if (amtTomb.sub(resultAmtTomb) > 0) {
             IERC20(tomb).transfer(msg.sender, amtTomb.sub(resultAmtTomb));
         }
-        if(amtToken.sub(resultAmtToken) > 0) {
+        if (amtToken.sub(resultAmtToken) > 0) {
             IERC20(token).transfer(msg.sender, amtToken.sub(resultAmtToken));
         }
         return (resultAmtTomb, resultAmtToken, liquidity);
@@ -158,7 +158,7 @@ contract TaxOfficeV2 is Operator {
             block.timestamp
         );
 
-        if(amtTomb.sub(resultAmtTomb) > 0) {
+        if (amtTomb.sub(resultAmtTomb) > 0) {
             IERC20(tomb).transfer(msg.sender, amtTomb.sub(resultAmtTomb));
         }
         return (resultAmtTomb, resultAmtFtm, liquidity);
